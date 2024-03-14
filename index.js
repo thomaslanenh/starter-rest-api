@@ -64,7 +64,7 @@ app.get('/:col', async (req, res) => {
   res.json(items).end()
 })
 
-app.post("/update-quote", async (req,res) => {
+app.get("/update-quote", async (req,res) => {
   console.log("Just got a request!")
   console.log(req.params)
   // test func
