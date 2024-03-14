@@ -20,6 +20,10 @@ app.use(express.urlencoded({ extended: true }))
 // #############################################################################
 
 // Create or Update an item
+
+const axios = require("axios")
+app.listen(process.env.PORT || 3000)
+
 app.post('/:col/:key', async (req, res) => {
   console.log(req.body)
 
@@ -58,6 +62,41 @@ app.get('/:col', async (req, res) => {
   const items = await db.collection(col).list()
   console.log(JSON.stringify(items, null, 2))
   res.json(items).end()
+})
+
+app.post("/update-quote", async (req,res) => {
+  console.log("Just got a request!")
+  console.log(req.params)
+  // test func
+
+  const updateDeal = async () => {
+    let data = JSON.stringify({
+      "properties": {
+        "lock_in_pricing": req.params.checkbox
+      }
+    });
+
+    let config = {
+      method: 'patch',
+      maxBodyLength: Infinity,
+      url: `https://api.hubapi.com/crm/v3/objects/deals/${req.params.deal_id}`,
+      headers: {
+        'authorization': `Bearer ${process.env.HSKEY}`,
+        'content-type': 'application/json'
+      },
+      data: data
+    };
+
+    try {
+      await axios.request(config);
+      res.status(200).send({success: true})
+    } catch (e) {
+      console.log(e)
+      res.status(200).send({success: false, error: e})
+    }
+  }
+
+  await updateDeal();
 })
 
 // Catch all handler for all other request.
